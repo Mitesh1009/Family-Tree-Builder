@@ -7,16 +7,22 @@ interface FamilyMemberTreeProps {
   familyTree: FamilyMember | null;
   onAction: (action: TreeAction) => void;
   onToggleExpansion: (memberId: string) => void;
+  isLoading: boolean;
 }
 
 const FamilyMemberTree: React.FC<FamilyMemberTreeProps> = ({
   familyTree,
   onAction,
   onToggleExpansion,
+  isLoading,
 }) => {
   const handleCreateRootClick = () => {
     onAction({ type: "add" });
   };
+
+  if (isLoading) {
+    return <div className={styles.loadingContainer}>Loading.....</div>;
+  }
 
   if (!familyTree) {
     return (

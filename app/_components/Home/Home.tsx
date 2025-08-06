@@ -22,6 +22,7 @@ import styles from "./Home.module.scss";
 
 const FamilyTreeApp: React.FC = () => {
   const [familyTree, setFamilyTree] = useState<FamilyMember | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [currentAction, setCurrentAction] = useState<TreeAction | null>(null);
   const [editingMember, setEditingMember] = useState<FamilyMember | null>(null);
@@ -33,6 +34,7 @@ const FamilyTreeApp: React.FC = () => {
     if (savedTree) {
       setFamilyTree(savedTree);
     }
+    setIsLoading(false);
   }, []);
 
   useEffect(() => {
@@ -84,7 +86,6 @@ const FamilyTreeApp: React.FC = () => {
           children: [],
           isExpanded: true,
         };
-
         setFamilyTree(newRoot);
       } else if (familyTree) {
         const updatedTree = addMember(
@@ -119,11 +120,9 @@ const FamilyTreeApp: React.FC = () => {
   const handleDeleteConfirm = () => {
     if (memberToDelete && familyTree) {
       const updatedTree = deleteMember(familyTree, memberToDelete);
-
       if (!updatedTree) {
         localStorage.removeItem("family_tree_data");
       }
-
       setFamilyTree(updatedTree);
     }
 
@@ -145,7 +144,6 @@ const FamilyTreeApp: React.FC = () => {
 
   const getEditFormData = (): FormData | undefined => {
     if (!editingMember) return undefined;
-
     return {
       name: editingMember.name,
       dateOfBirth: editingMember.dateOfBirth,
@@ -156,10 +154,9 @@ const FamilyTreeApp: React.FC = () => {
   };
 
   const getModalTitle = (): string => {
-    if (currentAction?.type === "edit") {
-      return "Edit Family Member";
-    }
-    return "Add New Family Member";
+    return currentAction?.type === "edit"
+      ? "Edit Family Member"
+      : "Add New Family Member";
   };
 
   return (
@@ -174,6 +171,7 @@ const FamilyTreeApp: React.FC = () => {
           familyTree={familyTree}
           onAction={handleAction}
           onToggleExpansion={handleToggleExpansion}
+          isLoading={isLoading}
         />
       </main>
 
